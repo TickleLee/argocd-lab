@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  name: tomcat
+  namespace: devops
+  labels:
+    app: tomcat
+spec:
+  progressDeadlineSeconds: 600 
+  replicas: 2
+  revisionHistoryLimit: 10 
+  selector:
+    matchLabels:
+      app: tomcat
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: tomcat
+    spec:
+      containers:
+      - image: tomcat:8.5-jre8-alpine
+        imagePullPolicy: IfNotPresent
+        name: tomcat
+        ports:
+        - name: port-first
+          containerPort: 8080
+          protocol: TCP
+        - name: port-second
+          containerPort: 8090
+          protocol: TCP
+      terminationGracePeriodSeconds: 30
